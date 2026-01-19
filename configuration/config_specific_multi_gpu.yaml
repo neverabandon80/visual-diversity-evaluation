@@ -1,0 +1,33 @@
+# Path to the root directory containing input images for diversity evaluation.
+image_dir: "/mnt/data/nas_155/datasets/detection/CrowdHuman/images/"
+
+# File path where the visual diversity evaluation report will be saved.
+result_path: "./evaluation_result/CrowdHuman_diversity_report.txt"
+
+# Path to the pre-trained SSCD (Self-Supervised Copy Detection) TorchScript model.
+model_path: "./models/sscd_disc_mixup.torchscript.pt"
+
+# Optional: Limit the number of images to evaluate. Leave empty or omit to process all images in 'image_dir'.
+max_images:
+
+# Batch size for embedding extraction. Adjust based on GPU memory.
+batch_size: 32
+
+# Device to run the model on: "cpu", "cuda", or "cuda:0", "cuda:1", etc.
+# Default: "cuda" if available, else "cpu"
+device: "cuda"
+
+# Enable multi-GPU processing to distribute workload and avoid OOM on large datasets.
+# When true, the model will use all available GPUs unless 'gpu_ids' is specified.
+# Example: gpu_ids: [0, 1] → use only GPU 0 and 1
+use_multi_gpu: true
+gpu_ids: [0, 1]
+
+# Enable disk-based caching to handle massive datasets without OOM.
+# If true, embeddings are saved to disk per batch and loaded later for diversity calculation.
+use_disk_cache: false
+embedding_cache_dir: "./embedding_cache/"
+
+# Skip already processed embeddings (for resume support)
+skip_existing: false
+

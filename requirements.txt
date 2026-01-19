@@ -1,0 +1,5 @@
+# Please install PyTorch and torchvision separately according to your CUDA version
+Pillow>=10.0.0
+numpy>=1.24.0
+tqdm>=4.66.0
+PyYAML>=6.0.0
