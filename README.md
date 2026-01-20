@@ -1,74 +1,55 @@
-Markdown
 
-# 📊 Visual Diversity Evaluation for Image Datasets
+📊 Visual Diversity Evaluation for Image Datasets
+Implementation of FineVision's Visual Diversity Metric
+Quantifying dataset quality using SSCD embeddings, Effective Rank & Participation Ratio
 
-> **Implementation of FineVision's Visual Diversity Metric**  
-> Quantifying dataset quality using SSCD embeddings, Effective Rank & Participation Ratio
+Python 3.8+
+PyTorch
+License: MIT
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+🎯 Motivation
+This repository implements the visual diversity measurement algorithm used in HuggingFace's FineVision project for evaluating MLLM (Multimodal Large Language Model) SFT datasets.
 
----
+Why This Matters
+✅ Quantify Dataset Quality: Transform subjective assessment into objective metrics
+✅ Detect Bias: Automatically identify repetitive patterns (e.g., tracking datasets with repeated backgrounds)
+✅ Optimize Data Augmentation: Understand which directions need more diversity
+✅ Active Learning: Use diversity as a criterion for core-set selection
+🔬 Algorithm Overview
+Step 1: SSCD Embedding Extraction
+Model: SSCD (Self-Supervised Copy Detection) by Meta AI
+Output: 512-dimensional embedding vectors per image
+Step 2: Diversity Calculation Pipeline
+1. Compute Covariance Matrix
 
-## 🎯 Motivation
+Analyze the directional spread of data distribution
+2. Eigenvalue Decomposition
 
-This repository implements the **visual diversity measurement algorithm** used in HuggingFace's [FineVision](https://huggingface.co/spaces/HuggingFaceM4/FineVision) project for evaluating MLLM (Multimodal Large Language Model) SFT datasets.
+Extract principal components and their magnitudes
+3. Calculate Effective Rank
 
-### Why This Matters
-- ✅ **Quantify Dataset Quality**: Transform subjective assessment into objective metrics
-- ✅ **Detect Bias**: Automatically identify repetitive patterns (e.g., tracking datasets with repeated backgrounds)
-- ✅ **Optimize Data Augmentation**: Understand which directions need more diversity
-- ✅ **Active Learning**: Use diversity as a criterion for core-set selection
+Entropy-based measure of directional diversity
+Formula: Effective Rank = exp(Entropy)
+4. Calculate Participation Ratio
 
----
+Measure how evenly variance is distributed across dimensions
+Formula: PR = (sum of eigenvalues)^2 / sum of (eigenvalues^2)
+5. Final Diversity Score
 
-## 🔬 Algorithm Overview
+Combine metrics using geometric mean
+Formula: Diversity Score = sqrt(Effective_Rank_normalized * Participation_Ratio_normalized)
+Reference Papers
+The Effective Rank: A Measure of Effective Dimensionality (EUSIPCO 2007)
+On the Importance of Single Directions for Generalization (ICLR 2018)
+🚀 Key Features
+✅ Multi-GPU Support: Powered by torch.nn.DataParallel
+✅ Memory Efficient: Local cache system (.npy) handles large-scale datasets (2.4M+ images)
+✅ Flexible Deployment: CPU, Single GPU, Multi-GPU compatibility
+✅ Fast Processing: Configurable batch processing with optimized throughput
+📦 Installation
+Requirements
+Bash
 
-### Step 1: SSCD Embedding Extraction
-- **Model**: [SSCD (Self-Supervised Copy Detection)](https://github.com/facebookresearch/sscd-copy-detection) by Meta AI
-- **Output**: 512-dimensional embedding vectors per image
-
-### Step 2: Diversity Calculation Pipeline
-Compute Covariance Matrix
-→ Analyze the directional spread of data
-
-Eigenvalue Decomposition
-→ Extract principal components and their magnitudes
-
-Calculate Effective Rank
-→ Entropy-based measure of directional diversity
-Effective Rank = exp(Entropy)
-
-Calculate Participation Ratio
-→ Measure how evenly variance is distributed
-PR = (Σλᵢ)² / Σ(λᵢ²)
-
-Final Diversity Score
-→ Geometric Mean(Effective Rank_normalized, Participation Ratio_normalized)
-
-text
-
-
-### Reference Papers
-- [The Effective Rank: A Measure of Effective Dimensionality](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2007/Papers/a5p-h05.pdf) (EUSIPCO 2007)
-- [On the Importance of Single Directions for Generalization](https://arxiv.org/abs/1803.06959) (ICLR 2018)
-
----
-
-## 🚀 Key Features
-
-- ✅ **Multi-GPU Support**: Powered by `torch.nn.DataParallel`
-- ✅ **Memory Efficient**: Local cache system (`.npy`) handles large-scale datasets (2.4M+ images)
-- ✅ **Flexible Deployment**: CPU, Single GPU, Multi-GPU compatibility
-- ✅ **Fast Processing**: Configurable batch processing with optimized throughput
-
----
-
-## 📦 Installation
-
-### Requirements
-```bash
 pip install -r requirements.txt
 Core Dependencies
 Python >= 3.8
@@ -129,38 +110,25 @@ SeaDroneSee	14,227	6	Maritime Detection	0.183	⭐
 DanceTrack	38,551	1	Human Tracking	0.145	⭐
 R7_Tracking	6,000	1	Sports Tracking	0.071	⭐
 Score Interpretation Guide
-text
-
-Diversity Score >= 0.50        : ⭐⭐⭐⭐⭐ Very Good
-                                 - FineVision benchmark level
-                                 - Optimal for large-scale MLLM training
-
-0.40 <= Score < 0.50           : ⭐⭐⭐⭐ Good
-                                 - Cambrian-7M level
-                                 - Suitable for general MLLM training
-
-0.30 <= Score < 0.40           : ⭐⭐⭐ Normal
-                                 - LLaVa-Vision level
-                                 - Consider filtering or augmentation
-
-0.20 <= Score < 0.30           : ⭐⭐ Low
-                                 - Potential bias or duplication issues
-
-Score < 0.20                   : ⭐ Very Low
-                                 - Quality inspection required
+Diversity Score Range	Rating	Description
+>= 0.50	⭐⭐⭐⭐⭐ Very Good	FineVision benchmark level, optimal for large-scale MLLM training
+0.40 - 0.50	⭐⭐⭐⭐ Good	Cambrian-7M level, suitable for general MLLM training
+0.30 - 0.40	⭐⭐⭐ Normal	LLaVa-Vision level, consider filtering or augmentation
+0.20 - 0.30	⭐⭐ Low	Potential bias or duplication issues
+< 0.20	⭐ Very Low	Quality inspection required
 💡 Key Insights
 1. Object Detection Datasets
 Most achieve Very Good diversity (score > 0.7)
-V3Det: 13,204 classes → Maintains 0.879 diversity despite 213K images
+V3Det: 13,204 classes maintains 0.879 diversity despite 213K images
 2. Tracking Datasets
-Repetitive backgrounds lead to Very Low diversity (0.071 ~ 0.183)
-R7_Tracking: 3 backgrounds × 2000 frames → Severe bias (0.071)
+Repetitive backgrounds lead to Very Low diversity (0.071 - 0.183)
+R7_Tracking: 3 backgrounds x 2000 frames = severe bias (0.071)
 3. MLLM Datasets
 M4-Instruct: Lower than FineVision (0.5) but still Good (0.413)
 Category diversity significantly impacts the score
 4. Interesting Cases
-RVSD: 80 locations → Higher diversity (0.293) despite being a tracking dataset
-SeaDroneSee: Repetitive maritime background → Lower diversity (0.183) despite detection task
+RVSD: 80 locations = higher diversity (0.293) despite being tracking dataset
+SeaDroneSee: Repetitive maritime background = lower diversity (0.183) despite detection task
 🗂 Project Structure
 text
 
@@ -186,25 +154,29 @@ visual-diversity-evaluation/
 └── README.md
 🎯 Use Cases
 1. Dataset Quality Assessment
+Evaluate diversity of your custom dataset
+
 Python
 
-# Evaluate diversity of your custom dataset
 score = evaluate_diversity('/path/to/my_dataset/')
 print(f"Dataset Quality Score: {score:.3f}")
 2. Data Augmentation Guidance
+Analyze which directions need augmentation
+
 Python
 
-# Analyze which directions need augmentation
 effective_rank, participation_ratio = get_diversity_components(embeddings)
 3. Active Learning Core-Set Selection
+Select diverse samples for annotation
+
 Python
 
-# Select diverse samples for annotation
 selected_indices = select_diverse_samples(embeddings, k=1000)
 4. Multi-Dataset Comparison
+Compare multiple datasets
+
 Python
 
-# Compare multiple datasets
 scores = {
     'dataset_A': evaluate_diversity('/path/A/'),
     'dataset_B': evaluate_diversity('/path/B/'),
@@ -213,12 +185,12 @@ scores = {
 Environment	Batch Size	Throughput (imgs/sec)	Memory
 CPU (16 cores)	4	~5	8GB RAM
 RTX 2080 (Single)	32	~120	8GB VRAM
-RTX 2080 (×4)	128	~400	32GB VRAM
+RTX 2080 (x4)	128	~400	32GB VRAM
 A100 (Single)	64	~300	40GB VRAM
 Large-Scale Dataset Handling:
 
-M4-Instruct (2.48M images) → Uses local cache (.npy format)
-Batch size 4, Single RTX 2080 → ~8 hours processing time
+M4-Instruct (2.48M images) uses local cache (.npy format)
+Batch size 4, Single RTX 2080: approximately 8 hours processing time
 🔧 Advanced Configuration
 Multi-GPU Setup
 YAML
@@ -253,3 +225,24 @@ FineVision - HuggingFace M4 Team
 SSCD - Meta AI Research
 Effective Rank - Roy & Vetterli (EUSIPCO 2007)
 Participation Ratio - Morcos et al. (ICLR 2018)
+📧 Contact
+GitHub: @neverabandon80
+Email: neverabandon1015@gmail.com
+Issues: Report here
+📌 Citation
+If you find this code useful in your research, please consider citing:
+
+bibtex
+
+@software{visual_diversity_evaluation_2025,
+  author = {ChangGiMoon},
+  title = {Visual Diversity Evaluation for Image Datasets},
+  year = {2025},
+  publisher = {GitHub},
+  url = {https://github.com/neverabandon80/visual-diversity-evaluation},
+  note = {Implementation of FineVision's diversity metric}
+}
+⭐ If you find this project useful, please consider giving it a star!
+
+📢 Share your results! We'd love to see how you use this tool.
+
