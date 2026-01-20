@@ -10,13 +10,27 @@ ENV/
 build/
 dist/
 *.egg-info/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+.installed.cfg
+*.egg
+MANIFEST
 
 # PyTorch
 *.pth
 *.pt
 *.ckpt
 
-# Data & Results (용량 큰 파일들 제외!)
+# Data & Results
 data/
 results/embeddings/*.npy
 results/embeddings/*.npz
@@ -28,6 +42,9 @@ results/embeddings/*.npz
 .idea/
 *.swp
 *.swo
+.spyderproject
+.spyproject
+.ropeproject
 
 # OS
 .DS_Store
@@ -37,6 +54,55 @@ desktop.ini
 # Logs
 *.log
 logs/
+pip-log.txt
+pip-delete-this-directory.txt
 
 # Jupyter
 .ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# Testing
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py.cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Environments
+.env
+.envrc
+.venv
+env.bak/
+venv.bak/
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Ruff
+.ruff_cache/
+
+# Other
+cython_debug/
+.abstra/
+.cursorignore
+.cursorindexingignore
+__marimo__/
+marimo/_static/
+marimo/_lsp/
+
+# GitHub Token (보안 중요!)
+github_token_*.txt
+*.txt
