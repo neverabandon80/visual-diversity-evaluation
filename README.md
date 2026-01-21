@@ -54,25 +54,13 @@ representation geometry analysis on **SSCD embeddings**.
 #### Step 3 — Effective Rank (ER)
 - Measures **entropy-based intrinsic dimensionality**
 
-```text
-ER = exp( -∑ pᵢ log pᵢ )
-````
-
 #### Step 4 — Participation Ratio (PR)
 
 * Measures **variance balance across dimensions**
 
-```text
-PR = (∑ λᵢ)² / ∑ (λᵢ²)
-```
-
 #### Step 5 — Final Diversity Score
 
 * Geometric mean of normalized ER and PR
-
-```text
-Diversity = √( ER_norm × PR_norm )
-```
 
 ---
 
